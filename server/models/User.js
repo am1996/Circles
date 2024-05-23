@@ -20,9 +20,12 @@ let userSchema = mongoose.Schema({
     refreshtoken: {
         type: String,
     },
-    posts:[
-        {type: mongoose.Schema.Types.ObjectId,ref:"Post"}
+    posts: [
+        { type: mongoose.Schema.Types.ObjectId, ref: "Post" }
     ]
-});
+},
+    {
+        timestamps: true
+    });
 const User = mongoose.model('User', userSchema);
 module.exports = User;
