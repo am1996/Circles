@@ -8,7 +8,6 @@ describe('User Route', () => {
   
     it('should respond with register message', async () => {
       const response = await request(app).get('/user/register');
-      console.log(response);
       expect(response.status).to.equal(200);
       expect(response.body).to.have.property('body');
       expect(response.body.message).to.equal('register');
