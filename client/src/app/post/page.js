@@ -3,9 +3,12 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import Preloader from "@/app/components/Preloader";
 import { useAuth } from "@/app/context/GlobalContext";
 import Link from "next/link";
+import moment from "moment";
+import WithAuth from "@/app/components/WithAuth";
+import SearchBar from "@/app/components/SearchBar";
 
 function Home() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
   const [postLoading, setPostLoading] = useState(true);
   let [errors, setErrors] = useState([]);
   const [posts, setPosts] = useState([]);
@@ -37,29 +40,40 @@ function Home() {
   } else {
     return (
       <>
-        {isAuthenticated ?
-          <div className="grid grid-cols-12 my-5">
-            {
-              posts.map(post => (
-                <div key={post._id} className="col-start-2 col-span-10 border border-slate-300 rounded p-5 mt-5 cursor-pointer">
-                  <Link href={"/post/" + post._id}>
-                    <div className="px-6 py-4">
-                      <div className="font-bold text-xl mb-2">{post.title}</div>
-                      <p className="text-gray-700 text-base">
-                        {post.content}
-                      </p>
+        {posts.length > 0 ?
+          <>
+            <SearchBar />
+            <div className="grid grid-cols-12 my-5">
+              {
+                posts.map(post => (
+                  <div key={post._id} className="col-start-2 col-span-10 border border-slate-300 rounded p-5 mt-5">
+                    <div className="flex items-center mt-3">
                       <div className="text-sm">
-                        <p className="text-gray-900 leading-none">Jonathan Reinink</p>
-                        <p className="text-gray-600">Aug 18</p>
+                        <p className="text-gray-900 leading-none py-2">
+                          <Link href="#">{post.createdBy.fullname.toUpperCase()}</Link>
+                        </p>
+                        <p className="text-gray-900 leading-none">{moment(post.createdAt).fromNow()}</p>
                       </div>
                     </div>
-                  </Link>
-                </div>
-              ))
-            }
-          </div>
+                    <div className="py-2">
+                      <div className="font-bold mb-2">{post.title}</div>
+                      <p className="text-base">
+                        {post.content}
+                      </p>
+                    </div>
+                    <div className="flex flex-row-reverse gap-1 justify-content-end">
+                      <Link href={"/post/" + post._id} className="bg-green-500 p-2 text-white float-right">Show Post</Link>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </>
           :
-          <h1>UnAuth</h1>
+          <div className="grid grid-cols-12 my-5">
+            <h1 className="col-start-2 text-4xl font-bold col-span-10">Posts:</h1>
+            <p className="col-start-2 mt-3 text-xl text-center col-span-10">No posts created yet...</p>
+          </div>
         }
       </>
     )
