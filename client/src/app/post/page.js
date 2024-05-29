@@ -1,15 +1,13 @@
 "use client";
 import { useEffect, useLayoutEffect, useState } from "react";
-import PreloaderComponent from "./components/PreloaderComponent";
-import { useAuth } from "./context/GlobalContext";
+import PreloaderComponent from "@/app/components/PreloaderComponent";
+import { useAuth } from "@/app/context/GlobalContext";
 import Link from "next/link";
-import moment from "moment";
-import WithAuth from "./components/WithAuth";
-import SearchBar from "./components/SearchBar";
-import PostComponent from "./components/PostComponent";
+import PostComponent from "../components/PostComponent";
+import WithAuth from "../components/WithAuth";
 
 function Home() {
-  const { isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const [postLoading, setPostLoading] = useState(true);
   let [errors, setErrors] = useState([]);
   const [posts, setPosts] = useState([]);
@@ -41,22 +39,16 @@ function Home() {
   } else {
     return (
       <>
-        <SearchBar />
-        {posts.length > 0 ?
-          <>
-            <div className="grid grid-cols-12 my-5">
-              {
-                posts.map(post => (
-                  <PostComponent post={post} key={post._id} />
-                ))
-              }
-            </div>
-          </>
-          :
+        {isAuthenticated ?
           <div className="grid grid-cols-12 my-5">
-            <h1 className="col-start-2 text-4xl font-bold col-span-10">Posts:</h1>
-            <p className="col-start-2 mt-3 text-xl text-center col-span-10">No posts created yet...</p>
+            {
+              posts.map(post => (
+                <PostComponent post={post} key={post._id} />
+              ))
+            }
           </div>
+          :
+          <h1>UnAuth</h1>
         }
       </>
     )

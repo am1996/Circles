@@ -1,7 +1,7 @@
 import React, { useContext,useLayoutEffect } from 'react';
 import { redirect } from 'next/navigation';
 import { useAuth } from '@/app/context/GlobalContext';
-import Preloader from './Preloader';
+import PreloaderComponent from './PreloaderComponent';
 
 function WithGuest(ProtectedComponent) {
   return function GuestHOC(props) {
@@ -13,7 +13,7 @@ function WithGuest(ProtectedComponent) {
       }
     }, [isAuthenticated,isLoading]); // Only run when isAuthenticated changes
     if(isLoading){
-      return (<Preloader />);
+      return (<PreloaderComponent />);
     }
     return <ProtectedComponent {...props} />;
   };
