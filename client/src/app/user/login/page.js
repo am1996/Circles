@@ -27,8 +27,8 @@ function login() {
                 body: data,
                 mode: "cors",
             }).then(resp => resp.json());
-            if(resp.Error) {
-                setErrors([{msg:resp.Error,path:"Server Error"}]);
+            if (resp.errors) {
+                setErrors([...resp.errors]);
             }
             if(resp.accesstoken) {
                 login(resp.accesstoken,resp.refreshtoken);
@@ -37,7 +37,6 @@ function login() {
             }
             formComponent.current.reset();
         } catch (e) {
-            console.log(e);
             setErrors([{msg:e+"",path:"Server Error"}]);
         }
 
@@ -64,7 +63,7 @@ function login() {
                         </label>
                         <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="password" id="password" type="password" placeholder="Enter Password" />
                         {errors.length > 0 ? errors.map((error, id) => {
-                            if(error.path =="password" || error.path == "Server Error")
+                            if (error.path == "password")
                                 return (<p className="text-red-500" key={id}>{error.msg}</p>);
                         }) : ""}
                     </div>

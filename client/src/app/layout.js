@@ -1,6 +1,6 @@
 "use client";
 import "./globals.css";
-import Navbar from "./components/Navbar";
+import NavbarComponent from "@/app/components/NavbarComponent";
 import {AuthProvider, useAuth} from "@/app/context/GlobalContext";
 
 export default function RootLayout({ children }) {
@@ -8,7 +8,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
           <AuthProvider>
-            <Navbar />
+            <NavbarComponent />
             {children}
           </AuthProvider>
       </body>

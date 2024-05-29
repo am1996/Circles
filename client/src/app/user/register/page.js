@@ -34,7 +34,6 @@ function register() {
                 setErrors([]);
             }
             formComponent.current.reset();
-            console.log(message);
         } catch (e) {
             setErrors([{ msg: e + "", path: "Server Error" }]);
         }

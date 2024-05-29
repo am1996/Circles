@@ -1,5 +1,5 @@
 "use client";
-import Preloader from "@/app/components/Preloader";
+import PreloaderComponent from "@/app/components/PreloaderComponent";
 import WithAuth from "@/app/components/WithAuth";
 import { useAuth } from "@/app/context/GlobalContext";
 import moment from "moment";
@@ -80,7 +80,7 @@ function Post() {
         getData();
     }, [message,likeStatus]);
     if (isLoading || postLoading) {
-        return <Preloader />
+        return <PreloaderComponent />
     } else {
         return (
             <div className="grid grid-cols-12 my-5">

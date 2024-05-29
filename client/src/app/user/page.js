@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import Preloader from "@/app/components/Preloader";
+import PreloaderComponent from "@/app/components/PreloaderComponent";
 import { useAuth } from "@/app/context/GlobalContext";
 import Link from "next/link";
 import moment from "moment";
@@ -110,7 +110,7 @@ function Dashboard() {
     getUser();
   }, [clicked]);
   if (isLoading || postLoading) {
-    return <Preloader />
+    return <PreloaderComponent />
   } else {
     return (
       <>
