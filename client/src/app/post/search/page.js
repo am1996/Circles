@@ -50,7 +50,11 @@ function SearchPost() {
 						<div className="grid grid-cols-12 my-5">
 							{
 								posts.map(post => (
-									<PostComponent post={post} key={post._id} />
+									<PostComponent post={post} key={post._id} element={
+										<div className="flex flex-row-reverse gap-1 justify-content-end">
+											<Link href={"/post/" + post._id} className="bg-green-500 p-2 text-white float-right">Show Post</Link>
+										</div>
+									} />
 								))
 							}
 						</div>

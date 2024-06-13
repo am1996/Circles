@@ -1,4 +1,6 @@
 "use client";
+import CommentComponent from "@/app/components/CommentComponent";
+import PostComponent from "@/app/components/PostComponent";
 import PreloaderComponent from "@/app/components/PreloaderComponent";
 import WithAuth from "@/app/components/WithAuth";
 import { useAuth } from "@/app/context/GlobalContext";
@@ -14,13 +16,13 @@ function Post() {
     let [postData, setPostData] = useState({});
     let [errors, setErrors] = useState([]);
     let [message, setMessage] = useState("");
-    let [likeStatus,setLikeStatus] = useState(null);
+    let [likeStatus, setLikeStatus] = useState(null);
     let router = useRouter();
     let formComponent = useRef();
     let postId = usePathname().split("/").at(-1);
-    async function like(e){
+    async function like(e) {
         e.preventDefault();
-        let resp = await fetch(process.env.SERVER_URL + "post/like/" + postId,{
+        let resp = await fetch(process.env.SERVER_URL + "post/like/" + postId, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -36,7 +38,7 @@ function Post() {
             let formdata = new FormData(formComponent.current);
             let data = JSON.stringify({
                 content: formdata.get("content"),
-                postId:postId
+                postId: postId
             });
             let resp = await fetch(process.env.SERVER_URL + "comment/add", {
                 method: "POST",
@@ -78,53 +80,25 @@ function Post() {
             setPostLoading(false);
         }
         getData();
-    }, [message,likeStatus]);
+    }, [message, likeStatus]);
     if (isLoading || postLoading) {
         return <PreloaderComponent />
     } else {
         return (
             <div className="grid grid-cols-12 my-5">
-                <div key={postData[0]._id} className="col-start-2 col-span-10 border border-slate-300 rounded p-5 mt-5">
-                    <div className="flex items-center mt-3">
-                        <div className="text-sm">
-                            <p className="text-gray-900 leading-none py-2">
-                                <Link href="#">{postData[0].owner[0].fullname.toUpperCase()}</Link>
-                            </p>
-                            <p className="text-gray-900 leading-none">{moment(postData[0].createdAt).fromNow()}</p>
-                        </div>
-                    </div>
-                    <div className="py-2">
-                        <div className="font-bold text-l mb-2">{postData[0].title}</div>
-                        <p className="text-l">
-                            {postData[0].content}
-                        </p>
-                    </div>
+                <PostComponent key={postData[0]._id} post={postData[0]} element={
                     <div className="flex flex-row-reverse gap-1 justify-content-end">
-                        <p className="p-2">{postData[0].likesCount} 
-                            {postData[0].likesCount > 1 ? "Likes" : " Like"}</p>
-                        <Link className={postData[0].liked ? "bg-blue-400 text-white p-2 float-right": "p-2 float-right"} onClick={like} href="#">Like</Link>
+                        <p className="p-2">{postData[0].likesCount}
+                            {postData[0].likesCount > 1 ? " Likes" : " Like"}</p>
+                        <Link className={postData[0].liked ? "bg-blue-400 text-white p-2 float-right" : "p-2 float-right"} onClick={like} href="#">Like</Link>
                     </div>
-                </div>
+                } />
                 <h1 className="col-start-2 col-span-10 mt-5 text-2xl font-bold">Comments</h1>
                 {
                     postData[0].comments.map(item => {
                         return (
-                            <div key={item._id} className="col-start-2 col-span-10 border border-slate-300 rounded p-5 mt-5">
-                                <div className="flex items-center mt-3">
-                                    <div className="text-sm">
-                                        <p className="text-gray-900 leading-none py-2">
-                                            <Link href="#">{item.owner[0].fullname.toUpperCase()}</Link>
-                                        </p>
-                                        <p className="text-gray-900 leading-none">{moment(item.createdAt).fromNow()}</p>
-                                    </div>
-                                </div>
-                                <div className="py-2">
-                                    <p className="text-l">
-                                        {item.content}
-                                    </p>
-                                </div>
-                            </div>
-                        )
+                            <CommentComponent key={item._id} item={item} />
+                        );
                     })
                 }
                 <div className="col-start-2 col-span-10 border border-slate-300 rounded p-5 mt-5">
