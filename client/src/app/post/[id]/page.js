@@ -13,6 +13,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 function Post() {
     const { isLoading, token } = useAuth();
     let [postLoading, setPostLoading] = useState(true);
+    let [commentsData, setCommentsData] = useState([]);
     let [postData, setPostData] = useState({});
     let [errors, setErrors] = useState([]);
     let [message, setMessage] = useState("");
@@ -31,6 +32,17 @@ function Post() {
             mode: "cors",
         }).then(resp => resp.json());
         setLikeStatus(!likeStatus);
+    }
+    async function getComments(){
+        let resp = await fetch(process.env.SERVER_URL + "comment/post/" + postId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            mode: "cors",
+        }).then(resp => resp.json()).then(resp=>resp);
+        return resp;
     }
     async function submitData(e) {
         e.preventDefault();
@@ -75,8 +87,10 @@ function Post() {
             }).then(resp => {
                 return resp.json();
             }).then(resp => resp);
+            let comments = await getComments();
+            setCommentsData(comments);
             setPostData(resp);
-            setLikeStatus(resp[0].liked);
+            setLikeStatus(resp.liked);
             setPostLoading(false);
         }
         getData();
@@ -86,20 +100,18 @@ function Post() {
     } else {
         return (
             <div className="grid grid-cols-12 my-5">
-                <PostComponent key={postData[0]._id} post={postData[0]} element={
+                <PostComponent key={postData._id} post={postData} element={
                     <div className="flex flex-row-reverse gap-1 justify-content-end">
-                        <p className="p-2">{postData[0].likesCount}
-                            {postData[0].likesCount > 1 ? " Likes" : " Like"}</p>
-                        <Link className={postData[0].liked ? "bg-blue-400 text-white p-2 float-right" : "p-2 float-right"} onClick={like} href="#">Like</Link>
+                        <p className="p-2">{postData.likesCount}
+                            {postData.likesCount > 1 ? " Likes" : " Like"}</p>
+                        <Link className={postData.liked ? "bg-blue-400 text-white p-2 float-right" : "p-2 float-right"} onClick={like} href="#">Like</Link>
                     </div>
                 } />
                 <h1 className="col-start-2 col-span-10 mt-5 text-2xl font-bold">Comments</h1>
                 {
-                    postData[0].comments.map(item => {
-                        return (
-                            <CommentComponent key={item._id} item={item} />
-                        );
-                    })
+                    commentsData.length > 0 ? commentsData.map(item => (
+                        <CommentComponent item={item} key={item._id} />
+                    )) : ""
                 }
                 <div className="col-start-2 col-span-10 border border-slate-300 rounded p-5 mt-5">
                     <h1 className="text-xl font-bold py-5">Comment</h1>

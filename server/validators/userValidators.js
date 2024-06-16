@@ -12,7 +12,7 @@ const validators = {
                 }
             });
         }).withMessage("The email is already registered."),
-        body("password").isLength({min:8,max:400}).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]+$/, 'i').
+        body("password").isLength({min:8,max:400}).matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[\w\.@]+/, 'gi').
         withMessage("Password should be more than 8 characters with alphanumeric and uppercase."),
         body("repeatpassword").custom((value,{req})=>{
             if(value != req.body.password) throw Error("Password and Repeat Password don't match.")
@@ -21,7 +21,7 @@ const validators = {
     ],
     loginUserValidator: [
         body("email").isEmail().withMessage("This is not a valid E-Mail form."),
-        body("password").isLength({min:8,max:400}).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]+$/, 'i').
+        body("password").isLength({min:8,max:400}).matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[\w\.@]+/, 'gi').
         withMessage("Password should be more than 8 characters with alphanumeric and uppercase."),
     ],
     changePasswordValidator: [

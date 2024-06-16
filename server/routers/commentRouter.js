@@ -7,5 +7,6 @@ const router = express.Router();
 router.use(jwtAuthenticateMiddleware);
 router.get("/",controllers.getComments);
 router.get("/user",controllers.getCommentsOfUser);
+router.get("/post/:id",controllers.getCommentsOfPost);
 router.post("/add",commentValidators.commentValidator,controllers.addComment);
 module.exports = router;

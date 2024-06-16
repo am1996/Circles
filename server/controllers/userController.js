@@ -21,15 +21,15 @@ let controllers = {
 			{ fullname: 1, email: 1, _id: 1 });
 		return res.status(200).json(user);
 	},
-	getUserById: async (req,res) => {
+	getUserById: async (req, res) => {
 		let followerId = req.user._id;
 		let userId = req.params.id;
 		let user = await User.findOne({ _id: userId },
-			{ fullname: 1, email: 1, _id: 1, createdAt:1 });
-		let follows = await Follow.countDocuments({followingId:userId}).exec();
-		const followed = !!(await Follow.findOne({ followerId:followerId, followingId:userId }));
+			{ fullname: 1, email: 1, _id: 1, createdAt: 1 });
+		let follows = await Follow.countDocuments({ followingId: userId }).exec();
+		const followed = !!(await Follow.findOne({ followerId: followerId, followingId: userId }));
 		user.numberOfFollowers = follows;
-		return res.status(200).json({user,numberOfFollowers:follows,followed});
+		return res.status(200).json({ user, numberOfFollowers: follows, followed });
 	},
 	register: async (req, res) => {
 		let errors = validationResult(req);
@@ -62,7 +62,11 @@ let controllers = {
 				refreshtoken
 			});
 		}
-		else return res.json({ Error: "Wrong E-Mail or password." })
+		else return res.json({
+			errors: [
+				{msg:"Wrong E-Mail or password.",path:"WrongCreds"}
+			]
+		});
 	},
 	refreshtoken: async (req, res) => {
 		const rtoken = req.body.refreshtoken;
@@ -117,10 +121,10 @@ let controllers = {
 		let followerId = req.user._id;
 		const followingId = req.params.id;
 		let existingFollow = await Follow.findOne({ followerId, followingId });
-        if (existingFollow) {
-            await Follow.findByIdAndDelete(existingFollow._id);
-            return res.json({ "message": "User followed" });
-        }
+		if (existingFollow) {
+			await Follow.findByIdAndDelete(existingFollow._id);
+			return res.json({ "message": "User followed" });
+		}
 		let follow = await Follow.create({
 			followerId: followerId,
 			followingId: followingId

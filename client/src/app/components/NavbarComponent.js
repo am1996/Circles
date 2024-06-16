@@ -5,6 +5,7 @@ import { useLayoutEffect } from "react";
 import { useAuth } from "@/app/context/GlobalContext";
 import png from "../../../public/Capture.PNG";
 import Image from "next/image";
+import { UserCircleIcon,HomeIcon, ArrowLeftStartOnRectangleIcon, PlusIcon, UserPlusIcon, ArrowLeftEndOnRectangleIcon } from '@heroicons/react/24/solid';
 
 export default function NavbarComponent() {
     let {isAuthenticated,isLoading,logout,token} =useAuth();
@@ -26,22 +27,34 @@ export default function NavbarComponent() {
         !isLoading ? 
         <>
             <nav className="bg-gray-800 text-white">
-                <div className="py-4">
+                <div>
                     <Link href={isAuthenticated ? "/":"/user/login"}>
                         <Image priority={false} className="px-2 inline-block" src={png} alt="my gif" height={30} />
                     </Link>
                         {
                         isAuthenticated ?
                         <>
-                            <Link href="/" className="p-3">Home</Link>
-                            <Link href="/user/" className="p-3">Dashboard</Link>
-                            <Link href="/post/add" className="p-3">Add Post</Link>
-                            <Link href="#" onClick={logOut} className="p-3">Logout</Link>
+                            <Link className="p-4 inline-block" href="/">
+                                <HomeIcon className="inline-block h-[25px] w-[25px]" />
+                            </Link>
+                            <Link className="p-4 inline-block"  href="/user/">
+                                <UserCircleIcon className="inline-block h-[25px] w-[25px]" />
+                            </Link>
+                            <Link href="/post/add" className="inline-block p-4">
+                                <PlusIcon className="inline-block h-[25px] w-[25px]" />
+                            </Link>
+                            <Link href="#" onClick={logOut} className="inline-block p-4">
+                                <ArrowLeftStartOnRectangleIcon className="inline-block h-[25px] w-[25px]" />
+                            </Link>
                         </> 
                         :
                         <>
-                            <Link href="/user/login" className="p-3">Login</Link>
-                            <Link href="/user/register" className="p-3">Register</Link>
+                            <Link className="p-4 inline-block" href="/user/register">
+                                <UserPlusIcon className="inline-block h-[25px] w-[25px]" />
+                            </Link>
+                            <Link className="p-4 inline-block" href="/user/login">
+                                <ArrowLeftEndOnRectangleIcon className="inline-block h-[25px] w-[25px]" />
+                            </Link>
                         </>
                         }
                 </div>

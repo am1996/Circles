@@ -13,12 +13,26 @@ let controller = {
         let comment = await Comment.create(req.body);
         return res.json(comment);
     },
+    getCommentsOfPost: async (req,res)=>{
+        let postId = req.params.id;
+        let comments = await Comment.find({postId: postId}).populate('createdBy', 'fullname email');
+        return res.json(comments);
+    },
     getCommentsOfUser: async (req,res) =>{
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 1;
+        const skip = (page - 1) * limit;
         let userId = req.user._id;
-        let Comments = await Comment.find({
+        let itemsCount = await Comment.countDocuments({createdBy: { _id: userId }});
+        
+        let comments = await Comment.find({
             createdBy:{_id:userId}
+        },null,{
+            limit: limit,
+            skip: skip
         }).populate('createdBy','fullname email');
-        return res.status(200).json(Comments);        
+        comments = {comments:comments,pages: Math.floor(itemsCount/limit)}
+        return res.status(200).json(comments);        
     },
 };
 

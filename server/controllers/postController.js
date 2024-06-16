@@ -29,10 +29,19 @@ let controller = {
         return res.json({ "message": "Post deleted." });
     },
     getPostsOfUser: async (req, res) => {
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 1;
+        const skip = (page - 1) * limit;
         let userId = req.user._id;
+        let itemsCount = await Post.countDocuments({createdBy: { _id: userId }});
+
         let posts = await Post.find({
-            createdBy: { _id: userId }
+            createdBy: { _id: userId },
+        },null,{
+            limit: limit,
+            skip: skip
         }).populate('createdBy', 'fullname email');
+        posts = {posts:posts,pages: Math.floor(itemsCount/limit)}
         return res.status(200).json(posts);
     },
     searchPost: async (req, res) => {
@@ -49,48 +58,14 @@ let controller = {
         let userId = req.user._id;
         let postId = req.params.id;
         const like = !!(await Like.findOne({ userId, postId }));
-        const numOfLikes = await Like.find({ postId: postId });
-        let post = await Post.aggregate([
-            {
-                $match: { "_id": new mongoose.Types.ObjectId(postId) }
-            },
-            {
-                $lookup: {
-                    from: 'comments', // Replace with your comment collection name
-                    localField: '_id', // Match comments' postId with post's _id
-                    foreignField: 'postId',
-                    as: 'comments',
-                    pipeline: [
-                        {
-                            $lookup: {
-                                from: 'users',
-                                localField: 'createdBy',
-                                foreignField: '_id',
-                                as: 'owner',
-                                pipeline: [
-                                    { $project: { fullname: 1, email: 1 } }
-                                ]
-                            },
-                        }
-                    ]
-                }
-            },
-            {
-                $lookup: {
-                    from: 'users', // Replace with your comment collection name
-                    localField: 'createdBy', // Match comments' postId with post's _id
-                    foreignField: '_id',
-                    as: 'owner',
-                    pipeline: [
-                        { $project: { fullname: 1, email: 1 } }
-                    ]
-                }
-            },
-        ]);
+        const numOfLikes = await Like.countDocuments({ postId: postId });
+        let post = await Post.findOne({ "_id": new mongoose.Types.ObjectId(postId) }).populate("createdBy",'fullname email _id');
         if(Object.keys(post).length > 0){
-            post[0].liked = like;
-            post[0].likesCount = numOfLikes.length;
-            return res.status(200).json(post);
+            return res.status(200).json({
+                ...post._doc,
+                liked : like,
+                likesCount: numOfLikes
+            });
         }else{
             return res.status(200).json({});
         }

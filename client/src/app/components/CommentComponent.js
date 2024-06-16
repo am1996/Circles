@@ -7,7 +7,7 @@ export default function CommentComponent({item}){
         <div className="flex items-center mt-3">
             <div className="text-sm">
                 <p className="text-gray-900 leading-none py-2">
-                    <Link href="#">{item.owner  [0].fullname.toUpperCase()}</Link>
+                    <Link href="#">{item.createdBy.fullname.toUpperCase()}</Link>
                 </p>
                 <p className="text-gray-900 leading-none">{moment(item.createdAt).fromNow()}</p>
             </div>
