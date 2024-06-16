@@ -2,11 +2,11 @@
 import { useState } from "react";
 import WithGuest from "@/app/components/WithGuest"; import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"; 
-import { UserSchema } from "@/app/Scheme/UserSchema";
+import { RegisterUserSchema } from "@/app/Scheme/UserSchema";
 
 function register() {
     let { register, handleSubmit, formState: { errors }, reset } = useForm({
-        resolver: zodResolver(UserSchema),
+        resolver: zodResolver(RegisterUserSchema),
         mode: "all"
     });
     let [ErrorsList, setErrorsList] = useState([]);
@@ -17,12 +17,12 @@ function register() {
             data =JSON.stringify(data);
             let resp = await fetch(process.env.SERVER_URL + "user/register", {
                 method: "POST",
-                headers: { "Content-Type": "application/json", },
+                headers: { "Content-Type": "application/json" },
                 body: data,
                 mode: "cors",
             }).then(resp => resp.json());
-            if (resp.ErrorsList) {
-                setErrorsList([...resp.ErrorsList]);
+            if (resp.errors) {
+                setErrorsList([...resp.errors]);
                 setMessage("");
             }
             if (resp.Message) {
