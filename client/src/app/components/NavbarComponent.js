@@ -27,13 +27,13 @@ export default function NavbarComponent() {
         <>
             <nav className="bg-gray-800 text-white">
                 <div className="py-4">
-                    <Link href="/">
+                    <Link href={isAuthenticated ? "/":"/user/login"}>
                         <Image priority={false} className="px-2 inline-block" src={png} alt="my gif" height={30} />
                     </Link>
-                    <Link href="/" className="p-3">Home</Link>
                         {
                         isAuthenticated ?
                         <>
+                            <Link href="/" className="p-3">Home</Link>
                             <Link href="/user/" className="p-3">Dashboard</Link>
                             <Link href="/post/add" className="p-3">Add Post</Link>
                             <Link href="#" onClick={logOut} className="p-3">Logout</Link>
