@@ -7,14 +7,14 @@ export default function PostComponent({post,element}){
 		<div className="col-start-2 col-span-10 border border-slate-300 rounded p-5 mt-5">
 			<div className="flex items-center mt-3">
 				<div className="text-sm">
-					<p className="text-gray-900 leading-none py-2">
-						<Link href="#">{post.createdBy.fullname}</Link>
+					<p className="text-gray-900 leading-none">
+						<Link className="font-bold" href={"/user/" + post.createdBy._id}>{post.createdBy.fullname}</Link> &nbsp;
+						<p className="text-gray-600 text-xs leading-none mb-3 inline-block">{moment(post.createdAt).fromNow()}</p>
 					</p>
-					<p className="text-gray-900 leading-none">{moment(post.createdAt).fromNow()}</p>
 				</div>
 			</div>
 			<div className="py-2">
-				<div className="font-bold mb-2">{post.title}</div>
+				<div className="font-bold inline-block">{post.title}</div>
 				<p className="text-base">
 					{post.content}
 				</p>

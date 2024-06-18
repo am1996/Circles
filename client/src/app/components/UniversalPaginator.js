@@ -1,4 +1,4 @@
-import { useQuery } from "react-query"
+import { useQuery, useQueryClient } from "react-query"
 import Link from "next/link";
 import PreloaderComponent from "@/app/components/PreloaderComponent";
 import { useAuth } from "@/app/context/GlobalContext";
@@ -13,6 +13,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import PaginatorCounter from "@/app/components/PaginatorCounter";
 
 export default function UniversalPaginator({ limit, resourceName, allowEdit, PostId = 0 }) {
+    let queryClient = useQueryClient();
     let limitNo = limit || 1;
     let [pageNo, setPageNo] = useState(1);
     let { token } = useAuth();
@@ -20,13 +21,13 @@ export default function UniversalPaginator({ limit, resourceName, allowEdit, Pos
         (qr) => {
             switch (resourceName) {
                 case "UserPosts":
-                    return getUserPosts(token, pageNo, limit);
+                    return getUserPosts(token, pageNo, limitNo);
                 case "UserComments":
-                    return getUserComments(token, pageNo, limit);
+                    return getUserComments(token, pageNo, limitNo);
                 case "PostComments":
-                    return getPostComments(token, PostId, pageNo, limit);
+                    return getPostComments(token, PostId, pageNo, limitNo);
                 case "PostsHome":
-                    return getPosts(token, pageNo, limit);
+                    return getPosts(token, pageNo, limitNo);
                 default:
                     throw new Error("Invalid resourceName provided");
             }
@@ -36,7 +37,7 @@ export default function UniversalPaginator({ limit, resourceName, allowEdit, Pos
     }, [data, isFetching]);
     let deletePost = async (id) => {
         deleteUserPost(id, token);
-        refetch();
+        queryClient.refetchQueries();
     }
     let deleteComment = async (id) => {
         deleteUserComment(id, token);

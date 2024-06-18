@@ -4,6 +4,7 @@ const { validationResult } = require("express-validator");
 const Like = require("../models/Like");
 const Follow = require("../models/Follow");
 const Comment = require("../models/Comment");
+
 let controller = {
     getPosts: async (req, res) => {
         let page = parseInt(req.query.page) || 1;
@@ -36,7 +37,8 @@ let controller = {
         let userId = req.user._id;
         let postId = req.params.id;
         let post = await Post.findOneAndDelete({ createdBy: userId, _id: postId });
-        let comments = await Comment.deleteMany({postId:postId});
+        let comments = await Comment.deleteMany({postId});
+        let likes = await Like.deleteMany({postId});
         return res.json({ "message": "Post deleted." });
     },
     getPostsOfUser: async (req, res) => {
