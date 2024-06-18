@@ -5,6 +5,7 @@ import { useAuth } from "@/app/context/GlobalContext";
 import Link from "next/link";
 import PostComponent from "../components/PostComponent";
 import WithAuth from "../components/WithAuth";
+import UniversalPaginator from "../components/UniversalPaginator";
 
 function Home() {
   const { isAuthenticated, isLoading } = useAuth();

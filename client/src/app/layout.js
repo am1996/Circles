@@ -1,7 +1,8 @@
 "use client";
 import "./globals.css";
 import NavbarComponent from "@/app/components/NavbarComponent";
-import {AuthProvider, useAuth} from "@/app/context/GlobalContext";
+import { AuthProvider, useAuth } from "@/app/context/GlobalContext";
+import { SkeletonTheme } from "react-loading-skeleton";
 import { QueryClient, QueryClientProvider } from "react-query";
 let queryClient = new QueryClient();
 

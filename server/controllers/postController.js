@@ -3,16 +3,26 @@ const Post = require("../models/Post");
 const { validationResult } = require("express-validator");
 const Like = require("../models/Like");
 const Follow = require("../models/Follow");
-
+const Comment = require("../models/Comment");
 let controller = {
     getPosts: async (req, res) => {
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 1;
+        const skip = (page - 1) * limit;
         let followedUsers = await Follow.find({followerId: req.user._id});
         followedUsers = followedUsers.map(item => {
             return item.followingId;
         });
+        followedUsers.push(req.user._id);
         let posts = await Post.find(
             {createdBy:{$in:followedUsers}}, null, 
-            { sort: { createdAt: -1 } }).populate('createdBy', 'fullname email');
+            { 
+                sort: { createdAt: -1 },
+                limit: limit,
+                skip: skip
+            }).populate('createdBy', 'fullname email');
+        let itemsCount = await Post.countDocuments({createdBy:{$in:followedUsers}});
+        posts = {posts: posts , pages: Math.floor(itemsCount/limit)};
         return res.status(200).json(posts);
     },
     addPost: async (req, res) => {
@@ -26,6 +36,7 @@ let controller = {
         let userId = req.user._id;
         let postId = req.params.id;
         let post = await Post.findOneAndDelete({ createdBy: userId, _id: postId });
+        let comments = await Comment.deleteMany({postId:postId});
         return res.json({ "message": "Post deleted." });
     },
     getPostsOfUser: async (req, res) => {

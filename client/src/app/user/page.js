@@ -2,7 +2,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useAuth } from "@/app/context/GlobalContext";
 import WithAuth from "../components/WithAuth";
-import { useRouter } from "next/navigation";
 import DefaultProfileImage from "../../../public/profile.svg";
 import UniversalPaginator from "@/app/components/UniversalPaginator";
 import PreloaderComponent from "@/app/components/PreloaderComponent";
@@ -16,9 +15,6 @@ function Dashboard() {
   let [message, setMessage] = useState("");
   let fullnameField = useRef();
   let emailField = useRef();
-  let [clicked, setClicked] = useState(false);
-  let router = useRouter();
-  const [posts, setPosts] = useState([]);
 
   async function changeFullname() {
     let fullname = fullnameField.current.value;
@@ -79,7 +75,7 @@ function Dashboard() {
       }
     }
     getUser();
-  }, [clicked, profileImage]);
+  }, [profileImage]);
   if (isLoading || postLoading) {
     return <PreloaderComponent />
   } else {
