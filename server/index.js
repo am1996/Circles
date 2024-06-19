@@ -7,8 +7,13 @@ const cors = require("cors");
 const connectToMongo = require('./config/db');
 const logger = require('./middlewares/Logger');
 const ErrorHandle = require('./middlewares/ErrorHandle');
+
+const http = require('http');
+const server = http.createServer(app);
+const socket = require("./socket");
+
 const corsOptions = {
-  origin: '*',
+  origin: process.env.ORIGIN,
   optionsSuccessStatus: 200,
 };
 
@@ -23,8 +28,8 @@ const initializeApp = async () => {
   await connectToMongo(cs);
 };
 
-
-app.listen(port,async ()=>{
+socket(server);
+server.listen(port,async ()=>{
   await initializeApp();
   console.log("listening on port " + port);
 });

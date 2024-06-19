@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const Post = require("../models/Post");
 const { validationResult } = require("express-validator");
+const eventEmitter = require("../Utils/EventEmitter");
 const Like = require("../models/Like");
 const Follow = require("../models/Follow");
 const Comment = require("../models/Comment");
@@ -21,7 +22,7 @@ let controller = {
                 sort: { createdAt: -1 },
                 limit: limit,
                 skip: skip
-            }).populate('createdBy', 'fullname email');
+            }).populate('createdBy', 'fullname username email');
         let itemsCount = await Post.countDocuments({createdBy:{$in:followedUsers}});
         posts = {posts: posts , pages: Math.floor(itemsCount/limit)};
         return res.status(200).json(posts);
@@ -31,14 +32,21 @@ let controller = {
         if (!errors.isEmpty()) return res.json(errors);
         req.body.createdBy = req.user._id;
         let post = await Post.create(req.body);
+        let notification = JSON.stringify({
+            UserId: req.user._id,
+            PostId: post._id,
+            username: req.user["username"],
+            title:post.title
+        });
+        eventEmitter.emit("post_added",notification);
         return res.json(post);
     },
     deletePost: async (req, res) => {
         let userId = req.user._id;
         let postId = req.params.id;
-        let post = await Post.findOneAndDelete({ createdBy: userId, _id: postId });
-        let comments = await Comment.deleteMany({postId});
-        let likes = await Like.deleteMany({postId});
+        await Post.findOneAndDelete({ createdBy: userId, _id: postId });
+        await Comment.deleteMany({postId});
+        await Like.deleteMany({postId});
         return res.json({ "message": "Post deleted." });
     },
     getPostsOfUser: async (req, res) => {
@@ -53,7 +61,7 @@ let controller = {
         },null,{
             limit: limit,
             skip: skip
-        }).populate('createdBy', 'fullname email');
+        }).populate('createdBy', 'fullname username email');
         posts = {posts:posts,pages: Math.floor(itemsCount/limit)}
         return res.status(200).json(posts);
     },
@@ -64,7 +72,7 @@ let controller = {
                 {content: { $regex: q, $options: 'i' }},
                 {title: { $regex: q, $options: 'i' }},
             ]
-        }).populate('createdBy', 'fullname email _id');
+        }).populate('createdBy', 'fullname username email _id');
         return res.status(200).json(posts);
     },
     getPost: async (req, res) => {
@@ -72,7 +80,7 @@ let controller = {
         let postId = req.params.id;
         const like = !!(await Like.findOne({ userId, postId }));
         const numOfLikes = await Like.countDocuments({ postId: postId });
-        let post = await Post.findOne({ "_id": new mongoose.Types.ObjectId(postId) }).populate("createdBy",'fullname email _id');
+        let post = await Post.findOne({ "_id": new mongoose.Types.ObjectId(postId) }).populate("createdBy",'fullname username email _id');
         if(Object.keys(post).length > 0){
             return res.status(200).json({
                 ...post._doc,

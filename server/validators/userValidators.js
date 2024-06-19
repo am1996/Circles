@@ -4,6 +4,14 @@ const User = require('../models/User');
 const validators = {
     registerUserValidator: [
         body("fullname").isLength({min:3,max:100}).withMessage("Enter a valid fullname with length between 3 and 100 characters."),
+        body("username").isLength({min:5,max:200}),
+        body("username").custom((value)=>{
+            return User.findOne({ username: value }).then((user) => {
+                if (user) {
+                  return Promise.reject('Username already in use');
+                }
+            });
+        }).withMessage("Username is already registered."),
         body("email").isEmail().withMessage("This is not a valid E-Mail."),
         body("email").custom((value)=>{
             return User.findOne({ email: value }).then((user) => {

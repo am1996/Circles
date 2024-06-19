@@ -3,12 +3,12 @@ let asecret = process.env.SECRET_KEY;
 let rsecret = process.env.REFRESH_KEY;
 const jwt = require("jsonwebtoken");
 
-function generateAccessTokens(id,email){
+function generateAccessTokens(id,username){
     let attl = 60*24*30;
     let rttl = 60*24*30;
     let accesstoken = jwt.sign({
         _id:id,
-        email:email,
+        username:username,
         iat: Date.now()
     },asecret,{
         expiresIn: attl

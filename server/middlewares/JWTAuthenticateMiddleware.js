@@ -1,7 +1,7 @@
 require('dotenv').config();
 const User = require('../models/User');
 const Utils = require("../Utils/JWTUtils");
-
+const eventEmitter = require("../Utils/EventEmitter");
 async function verifyAccessToken(req, res, next) {
     const authHeader = req.headers.authorization;
 
@@ -16,6 +16,7 @@ async function verifyAccessToken(req, res, next) {
         let user = await User.findOne({accesstoken: token});
         if(user){
             req.user = decoded;
+            eventEmitter.emit("uid",req.user._id);
             next();
         }else{
             return res.status(403).json({ Error: 'You are not currently logged in!' });

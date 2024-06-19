@@ -18,7 +18,7 @@ let controllers = {
 	getUser: async (req, res) => {
 		let userId = req.user._id;
 		let user = await User.findOne({ _id: userId },
-			{ fullname: 1, email: 1, _id: 1 });
+			{ fullname: 1, email: 1, _id: 1,username:1 });
 		return res.status(200).json(user);
 	},
 	getUserById: async (req, res) => {
@@ -34,6 +34,8 @@ let controllers = {
 	register: async (req, res) => {
 		let errors = validationResult(req);
 		if (errors.isEmpty()) {
+			req.body.username = req.body.username.toLowerCase();
+			req.body.email = req.body.email.toLowerCase();
 			req.body.password = bcrypt.hashSync(req.body.password);
 			req.body.accesstoken = "";
 			req.body.refreshtoken = "";
@@ -53,7 +55,7 @@ let controllers = {
 					refreshtoken: user.refreshtoken
 				});
 			}
-			let { accesstoken, refreshtoken } = Utils.generateAccessTokens(user._id, user.email);
+			let { accesstoken, refreshtoken } = Utils.generateAccessTokens(user._id, user.username);
 			user.accesstoken = accesstoken;
 			user.refreshtoken = refreshtoken;
 			await user.save();

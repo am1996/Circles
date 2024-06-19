@@ -5,7 +5,7 @@ import { useLayoutEffect } from "react";
 import { useAuth } from "@/app/context/GlobalContext";
 import png from "../../../public/Capture.PNG";
 import Image from "next/image";
-import { UserCircleIcon,HomeIcon, ArrowLeftStartOnRectangleIcon, PlusIcon, UserPlusIcon, ArrowLeftEndOnRectangleIcon } from '@heroicons/react/24/solid';
+import { UserCircleIcon,HomeIcon, ArrowLeftStartOnRectangleIcon, PlusIcon, UserPlusIcon, ArrowLeftEndOnRectangleIcon, BellAlertIcon } from '@heroicons/react/24/solid';
 
 export default function NavbarComponent() {
     let {isAuthenticated,isLoading,logout,token} =useAuth();
@@ -45,6 +45,9 @@ export default function NavbarComponent() {
                             </Link>
                             <Link href="#" onClick={logOut} className="inline-block p-4">
                                 <ArrowLeftStartOnRectangleIcon className="inline-block h-[25px] w-[25px]" />
+                            </Link>
+                            <Link href="#" onClick={logOut} className="inline-block p-4 float-end">
+                                <BellAlertIcon className="ml-auto inline-block h-[25px] w-[25px]" />
                             </Link>
                         </> 
                         :

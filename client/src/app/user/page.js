@@ -82,13 +82,20 @@ function Dashboard() {
     return (
       <>
         <div className="grid grid-cols-12 my-5">
-          <h1 className="col-start-2 text-4xl font-bold col-span-10">User Data:</h1>
           <div className="col-start-2 col-span-3 rounded flex justify-center items-center">
             <img src={profileImage || DefaultProfileImage.src} width="250" />
           </div>
           <div className="col-start-5 col-span-7 border border-slate-300 rounded p-5 mt-5">
             {message == "" ? "" :
               <p className="col-start-2 my-2 bg-green-500 p-2 text-white col-span-10">{message}</p>}
+            {/**username */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" >
+                Username
+              </label>
+              <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="username" id="username" type="text" placeholder={"@" + userData.username} defaultValue={"@" + userData.username} disabled />
+            </div>
+            {/**username end */}
             {/**fullname */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" >

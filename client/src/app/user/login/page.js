@@ -25,7 +25,6 @@ function login() {
                 body: data,
                 mode: "cors",
             }).then(resp => resp.json());
-            console.log(resp);
             if (resp.errors) {
                 setErrorsList([...resp.errors]);
             }
