@@ -7,10 +7,10 @@ const cors = require("cors");
 const connectToMongo = require('./config/db');
 const logger = require('./middlewares/Logger');
 const ErrorHandle = require('./middlewares/ErrorHandle');
-
+const path = require("path");
+const uploadPath = path.join(path.resolve("."), "public", "uploads");
 const http = require('http');
 const server = http.createServer(app);
-const socket = require("./socket");
 
 const corsOptions = {
   origin: process.env.ORIGIN,
@@ -23,13 +23,13 @@ const initializeApp = async () => {
   app.use(logger);
   app.use(express.json());
   app.use(cors(corsOptions));
-  app.use("/",routers);
+  app.use("/", routers);
   app.use(ErrorHandle);
+  app.use('/uploads', express.static(uploadPath));
   await connectToMongo(cs);
 };
 
-socket(server);
-server.listen(port,async ()=>{
+server.listen(port, async () => {
   await initializeApp();
   console.log("listening on port " + port);
 });

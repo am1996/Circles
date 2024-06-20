@@ -18,7 +18,7 @@ let controllers = {
 	getUser: async (req, res) => {
 		let userId = req.user._id;
 		let user = await User.findOne({ _id: userId },
-			{ fullname: 1, email: 1, _id: 1,username:1 });
+			{ fullname: 1, email: 1, _id: 1, username: 1,profile:1 });
 		return res.status(200).json(user);
 	},
 	getUserById: async (req, res) => {
@@ -66,7 +66,7 @@ let controllers = {
 		}
 		else return res.json({
 			errors: [
-				{msg:"Wrong E-Mail or password.",path:"WrongCreds"}
+				{ msg: "Wrong E-Mail or password.", path: "WrongCreds" }
 			]
 		});
 	},
@@ -150,6 +150,16 @@ let controllers = {
 		user.email = req.body.email;
 		await user.save();
 		return res.status(200).json({ Message: "Email was changed successfully!" });
+	},
+	changeProfile: async (req, res) => {
+		let uid = req.user._id;
+		if (req.file) {
+			const imageUrl = "/uploads/" + req.file.filename;
+			let user = await User.findOneAndUpdate({ _id: uid }, { $set: { profile: imageUrl } });
+			return res.status(200).json({ Message: "Image Uploaded Successfully", path: imageUrl });
+		} else {
+			return res.status(400).json({ Error: 'No image uploaded!' });
+		}
 	},
 	logout: async (req, res) => {
 		let user = await User.findOne({ _id: req.user._id });

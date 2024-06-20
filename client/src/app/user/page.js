@@ -15,6 +15,7 @@ function Dashboard() {
   let [message, setMessage] = useState("");
   let fullnameField = useRef();
   let emailField = useRef();
+  let imageField = useRef();
 
   async function changeFullname() {
     let fullname = fullnameField.current.value;
@@ -57,6 +58,22 @@ function Dashboard() {
   function changeProfile(e) {
     setProfileImage(URL.createObjectURL(e.target.files[0]));
   }
+  async function submitProfileImage(e){
+    let image = imageField.current.files[0];
+    const formData = new FormData();
+    formData.append("image",image);
+    const response = await fetch(process.env.SERVER_URL + "user/changeprofile",{
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + token
+      },
+      body: formData
+    }).then((resp)=> resp.json()).then(resp => resp);
+    console.log(response);
+    if(response.ok){
+      console.log(response);
+    }
+  }
   useLayoutEffect(() => {
     let getUser = async () => {
       let token = localStorage.getItem("accesstoken");
@@ -83,7 +100,7 @@ function Dashboard() {
       <>
         <div className="grid grid-cols-12 my-5">
           <div className="col-start-2 col-span-3 rounded flex justify-center items-center">
-            <img src={profileImage || DefaultProfileImage.src} width="250" />
+            <img src={(profileImage ||process.env.SERVER_URL+userData.profile.replace(/^\//,"")) || DefaultProfileImage.src} width="250" />
           </div>
           <div className="col-start-5 col-span-7 border border-slate-300 rounded p-5 mt-5">
             {message == "" ? "" :
@@ -133,9 +150,9 @@ function Dashboard() {
               <label className="block text-gray-700 text-sm font-bold mb-2" >
                 Profile Photo
               </label>
-              <input onChange={changeProfile} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="email" id="email" type="file" />
+              <input accept="image/*" ref={imageField} onChange={changeProfile} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="email" id="email" type="file" />
               <div className="flex flex-row-reverse gap-1 mt-2 justify-content-end">
-                <button className="bg-blue-400 p-2 text-white float-right">Upload Profile Photo</button>
+                <button onClick={submitProfileImage} className="bg-blue-400 p-2 text-white float-right">Upload Profile Photo</button>
               </div>
               {errors.length > 0 ? errors.map((error, id) => {
                 if (error.path == "email")

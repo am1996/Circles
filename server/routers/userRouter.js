@@ -3,6 +3,7 @@ const controllers = require("../controllers/userController");
 const userValidators = require("../validators/userValidators");
 const jwtAuthenticateMiddleware = require("../middlewares/JWTAuthenticateMiddleware");
 const router = express.Router();
+const multer = require("../config/multer");
 
 router.post("/login",userValidators.loginUserValidator,controllers.login);
 router.post("/register",userValidators.registerUserValidator,controllers.register);
@@ -16,6 +17,7 @@ router.get("/logout",controllers.logout);
 router.post("/changeemail",userValidators.changeEmailValidator,controllers.changeEmail);
 router.post("/changefullname",userValidators.changeFullnameValidator,controllers.changeFullname);
 router.post("/changepassword",userValidators.changePasswordValidator,controllers.changePassword);
+router.post("/changeprofile",multer.single("image"),controllers.changeProfile);
 router.get("/follow/:id",controllers.followUser);
 router.get("/:id",controllers.getUserById);
 module.exports = router;

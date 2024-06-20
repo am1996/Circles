@@ -1,7 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const Post = require("../models/Post");
 const { validationResult } = require("express-validator");
-const eventEmitter = require("../Utils/EventEmitter");
 const Like = require("../models/Like");
 const Follow = require("../models/Follow");
 const Comment = require("../models/Comment");
@@ -33,14 +32,6 @@ let controller = {
         if (!errors.isEmpty()) return res.json(errors);
         req.body.createdBy = req.user._id;
         let post = await Post.create(req.body);
-        let notification = JSON.stringify({
-            UserId: req.user._id,
-            PostId: post._id,
-            username: req.user["username"],
-            title:post.title
-        });
-        let socketData = await User.findOne({_id:req.user._id},{SocketId:1});
-        eventEmitter.emit("post_added" + socketData.SocketId,notification);
         return res.json(post);
     },
     deletePost: async (req, res) => {
