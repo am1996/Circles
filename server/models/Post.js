@@ -11,7 +11,8 @@ let postSchema = mongoose.Schema({
     },
     createdBy: {
         type: mongoose.Schema.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        index: true
     }
 },
 {

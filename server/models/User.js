@@ -25,6 +25,7 @@ let userSchema = mongoose.Schema({
     refreshtoken: {
         type: String,
     },
+    SocketId: String,
     posts: [
         { type: mongoose.Schema.Types.ObjectId, ref: "Post" }
     ]

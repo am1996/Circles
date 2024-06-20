@@ -5,6 +5,7 @@ const eventEmitter = require("../Utils/EventEmitter");
 const Like = require("../models/Like");
 const Follow = require("../models/Follow");
 const Comment = require("../models/Comment");
+const User = require("../models/User");
 
 let controller = {
     getPosts: async (req, res) => {
@@ -38,7 +39,8 @@ let controller = {
             username: req.user["username"],
             title:post.title
         });
-        eventEmitter.emit("post_added",notification);
+        let socketData = await User.findOne({_id:req.user._id},{SocketId:1});
+        eventEmitter.emit("post_added" + socketData.SocketId,notification);
         return res.json(post);
     },
     deletePost: async (req, res) => {

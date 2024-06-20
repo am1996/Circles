@@ -1,9 +1,9 @@
 let mongoose = require("mongoose");
 
 let NotificationSchema = mongoose.Schema({
-    read: { type: Boolean, default: false },
+    seen: { type: Boolean, default: false,index: true },
     UserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    PostId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+    PostId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true,index: true },
 },
 {
     timestamps: true
